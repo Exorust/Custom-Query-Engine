@@ -1,12 +1,18 @@
 %{
+#include <stdio.h>
 #include <string.h>
 %}
 
+%union {
+	/* The return values involved */
+	int num_value;
+	char op_val;
+
+}
+
+%token
 
 %%
-statement_list:	statement '\n'
-	|	statement_list statement '\n'
-	;
 
 query: get_type
 	| insert_type
@@ -14,7 +20,7 @@ query: get_type
 	| delete_type
 	;
 
-insert_type: INSERT RECORD record_list INTO FILETYPE {FILE* fp = fopen($5,'a'); fprintf("%s\n",$3);fclose(fp);}
+insert_type: INSERT RECORD record_list INTO FILETYPE {/*Call insert*/}
 	;
 
 delete_type: DELETE RECORD FROM FILETYPE WHERE condition_list
@@ -37,26 +43,36 @@ condition: FIELD OPERATOR VALUE
 
 
 %%
-/* look up a symbol table entry, add if not present */
-struct symtab *
-symlook(s)
-char *s;
-{
-	char *p;
-	struct symtab *sp;
 
-	for(sp = symtab; sp < &symtab[NSYMS]; sp++) {
-		/* is it already here? */
-		if(sp->name && !strcmp(sp->name, s))
-			return sp;
+/* Each file EMP or DEPT has first line containing the number of entries */
+void insert(char* file_name, char* record_list) {
+	FILE* fp_old,fp_new;
+	int file_size;
 
-		/* is it free */
-		if(!sp->name) {
-			sp->name = strdup(s);
-			return sp;
+	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
+		FILE* fp_old = fopen(file_name,'r');
+		FILE* fp_new = fopen("temp",'r');
+		fscanf(fp_old,"%d\n",&file_size);
+		fprintf(fp_new,"%d\n",(file_size+1));
+		int i;
+		char buffer[500];
+		memset(&buffer[0], 0, sizeof(buffer));
+		for(i=0;i<=file_size;i++) {
+			fscanf(fp_old,"%s",&buffer);
+			fprintf(fp_new,"%s",buffer)
+			memset(&buffer[0], 0, strlen(buffer));
 		}
-		/* otherwise continue to next */
+		fprintf(fp_new,"%s\n",record_list);
+
+		fclose(fp_new);
+		fclose(fp_old);
+		remove(file_name);
+		rename("temp", file_name);
 	}
-	yyerror("Too many symbols");
-	exit(1);	/* cannot continue */
-} /* symlook */
+	else {
+		printf("Wrong file.")
+	}
+
+}
+
+void 
