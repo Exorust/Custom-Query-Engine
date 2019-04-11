@@ -1,42 +1,41 @@
 %{
-#include "ch3hdr.h"
 #include <string.h>
 %}
 
-%union {
-	double dval;
-	struct symtab *symp;
-}
-%token <symp> NAME
-%token <dval> NUMBER
-%left '-' '+'
-%left '*' '/'
-%nonassoc UMINUS
 
-%type <dval> expression
 %%
 statement_list:	statement '\n'
 	|	statement_list statement '\n'
 	;
 
-statement:	NAME '=' expression	{ $1->value = $3; }
-	|	expression		{ printf("= %g\n", $1); }
+query: get_type
+	| insert_type
+	| update_type
+	| delete_type
 	;
 
-expression:	expression '+' expression { $$ = $1 + $3; }
-	|	expression '-' expression { $$ = $1 - $3; }
-	|	expression '*' expression { $$ = $1 * $3; }
-	|	expression '/' expression
-				{	if($3 == 0.0)
-						yyerror("divide by zero");
-					else
-						$$ = $1 / $3;
-				}
-	|	'-' expression %prec UMINUS	{ $$ = -$2; }
-	|	'(' expression ')'	{ $$ = $2; }
-	|	NUMBER
-	|	NAME			{ $$ = $1->value; }
+insert_type: INSERT RECORD record_list INTO FILETYPE {FILE* fp = fopen($5,'a'); fprintf("%s\n",$3);fclose(fp);}
 	;
+
+delete_type: DELETE RECORD FROM FILETYPE WHERE condition_list
+	;
+
+update_type:	UPDATE RECORD IN FILETYPE SET FIELD TO NEW_VALUE WHERE condition_list
+	;
+
+get_type: GET FIELDS FROM FILETYPE WHERE condition_list
+	;
+
+condition_list: condition_list AND condition
+	| condition_list OR condition
+	| condition
+	;
+
+condition: FIELD OPERATOR VALUE
+	;
+
+
+
 %%
 /* look up a symbol table entry, add if not present */
 struct symtab *
