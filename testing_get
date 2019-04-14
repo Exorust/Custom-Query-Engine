@@ -1,0 +1,1 @@
+get dname,dnum from dept where dnum = 1

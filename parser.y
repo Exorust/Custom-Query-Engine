@@ -66,7 +66,7 @@ get_type: GET fields FROM filetype WHERE condition_list {
 
 condition_list: condition_list AND condition {
 			assert(($1)[0] == ($3)[0]);
-			assert(($1)[0] == (sizeof($1)-1));
+			/* assert(($1)[0] == (sizeof($1)-1)); */
 			int len = ($1)[0];
 			int* arr = (int*)malloc(sizeof(int)*(len+1));
 			arr[0] = len;
@@ -387,12 +387,14 @@ int get_function(int* field_arr,int fx, int* farray) {
 			if(farray[i+1] == 1) {
 				fscanf(fp_old,"%[^\n]\n",buffer);
 				/* Print the get vals */
-				printf("%s\n",buffer);
+				printf("%s\n\n",buffer);
 				memset(&buffer[0], 0, strlen(buffer));
 				counter++;
 			}
 			else {
 				/* Delete the cases that satisfy the criteria */
+				fscanf(fp_old,"%[^\n]\n",buffer);
+				memset(&buffer[0], 0, strlen(buffer));
 				continue;
 			}
 		}
@@ -426,11 +428,18 @@ int update_function(int field_var, char* new_val,int fx, int* farray) {
 		abort();
 	}
 
+	/* int j,count=0;
+	for(j=1; j<=farray[0]; j++) {
+		if(farray[j+1] == 1) {
+			count++;
+		}
+	} */
+
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
 		FILE* fp_old = fopen(file_name,"r");
 		FILE* fp_new = fopen("temp","w");
 		fscanf(fp_old,"%d\n",&file_size);
-		fprintf(fp_new,"%d\n",farray[0]);
+		fprintf(fp_new,"%d\n",file_size);
 		int i;
 		char buffer[100];
 		memset(&buffer[0], 0, sizeof(buffer));
@@ -537,11 +546,18 @@ int delete_function(int fx, int* farray) {
 		abort();
 	}
 
+	int j,count=0;
+	for(j=1; j<=farray[0]; j++) {
+		if(farray[j+1] == 1) {
+			count++;
+		}
+	}
+
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
 		FILE* fp_old = fopen(file_name,"r");
 		FILE* fp_new = fopen("temp","w");
 		fscanf(fp_old,"%d\n",&file_size);
-		fprintf(fp_new,"%d\n",(file_size - farray[0]));
+		fprintf(fp_new,"%d\n",(file_size - count));
 		int i;
 		char buffer[500];
 		memset(&buffer[0], 0, sizeof(buffer));

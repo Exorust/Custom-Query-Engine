@@ -1,1 +1,1 @@
-get dname,dnum from dept where dnum = 1
+UPDATE RECORD IN emp SET ename TO "y" WHERE eid = 5 and deptno = 20
