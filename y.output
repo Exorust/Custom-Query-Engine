@@ -1,0 +1,793 @@
+Terminals unused in grammar
+
+   SEMICOLON
+   IDENTIFIER
+   FIELDLIST
+
+
+Grammar
+
+    0 $accept: query $end
+
+    1 query: get_type
+    2      | insert_type
+    3      | update_type
+    4      | delete_type
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype
+
+    6 delete_type: DELETE RECORD FROM filetype WHERE condition_list
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE WHERE condition_list
+
+    8 get_type: GET fields FROM filetype WHERE condition_list
+
+    9 condition_list: condition_list AND condition
+   10               | condition_list OR condition
+   11               | condition
+
+   12 VALUE: STRING
+   13      | INTEGER
+   14      | FLOAT
+
+   15 record_list: record_list STRING
+   16            | record_list INTEGER
+   17            | record_list FLOAT
+   18            | STRING
+   19            | INTEGER
+   20            | FLOAT
+
+   21 condition: FIELD OPERATOR VALUE
+
+   22 fields: fields COMMA FIELD
+   23       | FIELD
+
+   24 FIELD: eid
+   25      | ename
+   26      | eage
+   27      | eaddress
+   28      | salary
+   29      | deptno
+   30      | dnum
+   31      | dname
+   32      | dlocation
+
+   33 OPERATOR: EQUAL
+   34         | LESSER
+   35         | GREATER
+   36         | GREATEREQ
+   37         | LESSEREQ
+
+   38 filetype: EMP
+   39         | DEPT
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+SEMICOLON (258)
+COMMA (259) 22
+EQUAL (260) 33
+GREATER (261) 35
+GREATEREQ (262) 36
+LESSER (263) 34
+LESSEREQ (264) 37
+OPENPARANTHESIS (265) 5
+CLOSEPARANTHESIS (266) 5
+GET (267) 8
+FROM (268) 6 8
+AND (269) 9
+OR (270) 10
+INSERT (271) 5
+RECORD (272) 5 6 7
+INTO (273) 5
+UPDATE (274) 7
+IN (275) 7
+SET (276) 7
+TO (277) 7
+DELETE (278) 6
+EMP (279) 38
+DEPT (280) 39
+eid (281) 24
+ename (282) 25
+eage (283) 26
+eaddress (284) 27
+salary (285) 28
+deptno (286) 29
+dnum (287) 30
+dname (288) 31
+dlocation (289) 32
+WHERE (290) 6 7 8
+IDENTIFIER (291)
+FIELDLIST (292)
+STRING (293) 12 15 18
+INTEGER (294) 13 16 19
+FLOAT (295) 14 17 20
+
+
+Nonterminals, with rules where they appear
+
+$accept (41)
+    on left: 0
+query (42)
+    on left: 1 2 3 4, on right: 0
+insert_type (43)
+    on left: 5, on right: 2
+delete_type (44)
+    on left: 6, on right: 4
+update_type (45)
+    on left: 7, on right: 3
+get_type (46)
+    on left: 8, on right: 1
+condition_list (47)
+    on left: 9 10 11, on right: 6 7 8 9 10
+VALUE (48)
+    on left: 12 13 14, on right: 7 21
+record_list (49)
+    on left: 15 16 17 18 19 20, on right: 5 15 16 17
+condition (50)
+    on left: 21, on right: 9 10 11
+fields (51)
+    on left: 22 23, on right: 8 22
+FIELD (52)
+    on left: 24 25 26 27 28 29 30 31 32, on right: 7 21 22 23
+OPERATOR (53)
+    on left: 33 34 35 36 37, on right: 21
+filetype (54)
+    on left: 38 39, on right: 5 6 7 8
+
+
+State 0
+
+    0 $accept: . query $end
+
+    GET     shift, and go to state 1
+    INSERT  shift, and go to state 2
+    UPDATE  shift, and go to state 3
+    DELETE  shift, and go to state 4
+
+    query        go to state 5
+    insert_type  go to state 6
+    delete_type  go to state 7
+    update_type  go to state 8
+    get_type     go to state 9
+
+
+State 1
+
+    8 get_type: GET . fields FROM filetype WHERE condition_list
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    fields  go to state 19
+    FIELD   go to state 20
+
+
+State 2
+
+    5 insert_type: INSERT . RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype
+
+    RECORD  shift, and go to state 21
+
+
+State 3
+
+    7 update_type: UPDATE . RECORD IN filetype SET FIELD TO VALUE WHERE condition_list
+
+    RECORD  shift, and go to state 22
+
+
+State 4
+
+    6 delete_type: DELETE . RECORD FROM filetype WHERE condition_list
+
+    RECORD  shift, and go to state 23
+
+
+State 5
+
+    0 $accept: query . $end
+
+    $end  shift, and go to state 24
+
+
+State 6
+
+    2 query: insert_type .
+
+    $default  reduce using rule 2 (query)
+
+
+State 7
+
+    4 query: delete_type .
+
+    $default  reduce using rule 4 (query)
+
+
+State 8
+
+    3 query: update_type .
+
+    $default  reduce using rule 3 (query)
+
+
+State 9
+
+    1 query: get_type .
+
+    $default  reduce using rule 1 (query)
+
+
+State 10
+
+   24 FIELD: eid .
+
+    $default  reduce using rule 24 (FIELD)
+
+
+State 11
+
+   25 FIELD: ename .
+
+    $default  reduce using rule 25 (FIELD)
+
+
+State 12
+
+   26 FIELD: eage .
+
+    $default  reduce using rule 26 (FIELD)
+
+
+State 13
+
+   27 FIELD: eaddress .
+
+    $default  reduce using rule 27 (FIELD)
+
+
+State 14
+
+   28 FIELD: salary .
+
+    $default  reduce using rule 28 (FIELD)
+
+
+State 15
+
+   29 FIELD: deptno .
+
+    $default  reduce using rule 29 (FIELD)
+
+
+State 16
+
+   30 FIELD: dnum .
+
+    $default  reduce using rule 30 (FIELD)
+
+
+State 17
+
+   31 FIELD: dname .
+
+    $default  reduce using rule 31 (FIELD)
+
+
+State 18
+
+   32 FIELD: dlocation .
+
+    $default  reduce using rule 32 (FIELD)
+
+
+State 19
+
+    8 get_type: GET fields . FROM filetype WHERE condition_list
+   22 fields: fields . COMMA FIELD
+
+    COMMA  shift, and go to state 25
+    FROM   shift, and go to state 26
+
+
+State 20
+
+   23 fields: FIELD .
+
+    $default  reduce using rule 23 (fields)
+
+
+State 21
+
+    5 insert_type: INSERT RECORD . OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype
+
+    OPENPARANTHESIS  shift, and go to state 27
+
+
+State 22
+
+    7 update_type: UPDATE RECORD . IN filetype SET FIELD TO VALUE WHERE condition_list
+
+    IN  shift, and go to state 28
+
+
+State 23
+
+    6 delete_type: DELETE RECORD . FROM filetype WHERE condition_list
+
+    FROM  shift, and go to state 29
+
+
+State 24
+
+    0 $accept: query $end .
+
+    $default  accept
+
+
+State 25
+
+   22 fields: fields COMMA . FIELD
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    FIELD  go to state 30
+
+
+State 26
+
+    8 get_type: GET fields FROM . filetype WHERE condition_list
+
+    EMP   shift, and go to state 31
+    DEPT  shift, and go to state 32
+
+    filetype  go to state 33
+
+
+State 27
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS . record_list CLOSEPARANTHESIS INTO filetype
+
+    STRING   shift, and go to state 34
+    INTEGER  shift, and go to state 35
+    FLOAT    shift, and go to state 36
+
+    record_list  go to state 37
+
+
+State 28
+
+    7 update_type: UPDATE RECORD IN . filetype SET FIELD TO VALUE WHERE condition_list
+
+    EMP   shift, and go to state 31
+    DEPT  shift, and go to state 32
+
+    filetype  go to state 38
+
+
+State 29
+
+    6 delete_type: DELETE RECORD FROM . filetype WHERE condition_list
+
+    EMP   shift, and go to state 31
+    DEPT  shift, and go to state 32
+
+    filetype  go to state 39
+
+
+State 30
+
+   22 fields: fields COMMA FIELD .
+
+    $default  reduce using rule 22 (fields)
+
+
+State 31
+
+   38 filetype: EMP .
+
+    $default  reduce using rule 38 (filetype)
+
+
+State 32
+
+   39 filetype: DEPT .
+
+    $default  reduce using rule 39 (filetype)
+
+
+State 33
+
+    8 get_type: GET fields FROM filetype . WHERE condition_list
+
+    WHERE  shift, and go to state 40
+
+
+State 34
+
+   18 record_list: STRING .
+
+    $default  reduce using rule 18 (record_list)
+
+
+State 35
+
+   19 record_list: INTEGER .
+
+    $default  reduce using rule 19 (record_list)
+
+
+State 36
+
+   20 record_list: FLOAT .
+
+    $default  reduce using rule 20 (record_list)
+
+
+State 37
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list . CLOSEPARANTHESIS INTO filetype
+   15 record_list: record_list . STRING
+   16            | record_list . INTEGER
+   17            | record_list . FLOAT
+
+    CLOSEPARANTHESIS  shift, and go to state 41
+    STRING            shift, and go to state 42
+    INTEGER           shift, and go to state 43
+    FLOAT             shift, and go to state 44
+
+
+State 38
+
+    7 update_type: UPDATE RECORD IN filetype . SET FIELD TO VALUE WHERE condition_list
+
+    SET  shift, and go to state 45
+
+
+State 39
+
+    6 delete_type: DELETE RECORD FROM filetype . WHERE condition_list
+
+    WHERE  shift, and go to state 46
+
+
+State 40
+
+    8 get_type: GET fields FROM filetype WHERE . condition_list
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    condition_list  go to state 47
+    condition       go to state 48
+    FIELD           go to state 49
+
+
+State 41
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS . INTO filetype
+
+    INTO  shift, and go to state 50
+
+
+State 42
+
+   15 record_list: record_list STRING .
+
+    $default  reduce using rule 15 (record_list)
+
+
+State 43
+
+   16 record_list: record_list INTEGER .
+
+    $default  reduce using rule 16 (record_list)
+
+
+State 44
+
+   17 record_list: record_list FLOAT .
+
+    $default  reduce using rule 17 (record_list)
+
+
+State 45
+
+    7 update_type: UPDATE RECORD IN filetype SET . FIELD TO VALUE WHERE condition_list
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    FIELD  go to state 51
+
+
+State 46
+
+    6 delete_type: DELETE RECORD FROM filetype WHERE . condition_list
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    condition_list  go to state 52
+    condition       go to state 48
+    FIELD           go to state 49
+
+
+State 47
+
+    8 get_type: GET fields FROM filetype WHERE condition_list .
+    9 condition_list: condition_list . AND condition
+   10               | condition_list . OR condition
+
+    AND  shift, and go to state 53
+    OR   shift, and go to state 54
+
+    $default  reduce using rule 8 (get_type)
+
+
+State 48
+
+   11 condition_list: condition .
+
+    $default  reduce using rule 11 (condition_list)
+
+
+State 49
+
+   21 condition: FIELD . OPERATOR VALUE
+
+    EQUAL      shift, and go to state 55
+    GREATER    shift, and go to state 56
+    GREATEREQ  shift, and go to state 57
+    LESSER     shift, and go to state 58
+    LESSEREQ   shift, and go to state 59
+
+    OPERATOR  go to state 60
+
+
+State 50
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO . filetype
+
+    EMP   shift, and go to state 31
+    DEPT  shift, and go to state 32
+
+    filetype  go to state 61
+
+
+State 51
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD . TO VALUE WHERE condition_list
+
+    TO  shift, and go to state 62
+
+
+State 52
+
+    6 delete_type: DELETE RECORD FROM filetype WHERE condition_list .
+    9 condition_list: condition_list . AND condition
+   10               | condition_list . OR condition
+
+    AND  shift, and go to state 53
+    OR   shift, and go to state 54
+
+    $default  reduce using rule 6 (delete_type)
+
+
+State 53
+
+    9 condition_list: condition_list AND . condition
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    condition  go to state 63
+    FIELD      go to state 49
+
+
+State 54
+
+   10 condition_list: condition_list OR . condition
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    condition  go to state 64
+    FIELD      go to state 49
+
+
+State 55
+
+   33 OPERATOR: EQUAL .
+
+    $default  reduce using rule 33 (OPERATOR)
+
+
+State 56
+
+   35 OPERATOR: GREATER .
+
+    $default  reduce using rule 35 (OPERATOR)
+
+
+State 57
+
+   36 OPERATOR: GREATEREQ .
+
+    $default  reduce using rule 36 (OPERATOR)
+
+
+State 58
+
+   34 OPERATOR: LESSER .
+
+    $default  reduce using rule 34 (OPERATOR)
+
+
+State 59
+
+   37 OPERATOR: LESSEREQ .
+
+    $default  reduce using rule 37 (OPERATOR)
+
+
+State 60
+
+   21 condition: FIELD OPERATOR . VALUE
+
+    STRING   shift, and go to state 65
+    INTEGER  shift, and go to state 66
+    FLOAT    shift, and go to state 67
+
+    VALUE  go to state 68
+
+
+State 61
+
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype .
+
+    $default  reduce using rule 5 (insert_type)
+
+
+State 62
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD TO . VALUE WHERE condition_list
+
+    STRING   shift, and go to state 65
+    INTEGER  shift, and go to state 66
+    FLOAT    shift, and go to state 67
+
+    VALUE  go to state 69
+
+
+State 63
+
+    9 condition_list: condition_list AND condition .
+
+    $default  reduce using rule 9 (condition_list)
+
+
+State 64
+
+   10 condition_list: condition_list OR condition .
+
+    $default  reduce using rule 10 (condition_list)
+
+
+State 65
+
+   12 VALUE: STRING .
+
+    $default  reduce using rule 12 (VALUE)
+
+
+State 66
+
+   13 VALUE: INTEGER .
+
+    $default  reduce using rule 13 (VALUE)
+
+
+State 67
+
+   14 VALUE: FLOAT .
+
+    $default  reduce using rule 14 (VALUE)
+
+
+State 68
+
+   21 condition: FIELD OPERATOR VALUE .
+
+    $default  reduce using rule 21 (condition)
+
+
+State 69
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE . WHERE condition_list
+
+    WHERE  shift, and go to state 70
+
+
+State 70
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE WHERE . condition_list
+
+    eid        shift, and go to state 10
+    ename      shift, and go to state 11
+    eage       shift, and go to state 12
+    eaddress   shift, and go to state 13
+    salary     shift, and go to state 14
+    deptno     shift, and go to state 15
+    dnum       shift, and go to state 16
+    dname      shift, and go to state 17
+    dlocation  shift, and go to state 18
+
+    condition_list  go to state 71
+    condition       go to state 48
+    FIELD           go to state 49
+
+
+State 71
+
+    7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE WHERE condition_list .
+    9 condition_list: condition_list . AND condition
+   10               | condition_list . OR condition
+
+    AND  shift, and go to state 53
+    OR   shift, and go to state 54
+
+    $default  reduce using rule 7 (update_type)

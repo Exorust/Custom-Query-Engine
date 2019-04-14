@@ -37,8 +37,8 @@ query: get_type { $$ = $1; }
 	| delete_type { $$ = $1; }
 	;
 
-insert_type: INSERT RECORD record_list INTO filetype {
-			$$ = insert_function($5,$3);
+insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype {
+			$$ = insert_function($7,$4);
 		}
 	;
 
@@ -92,7 +92,31 @@ VALUE: STRING {$$ = $1;}
 	| INTEGER {$$ = $1;}
 	| FLOAT {$$ = $1;}
 
-record_list: STRING {$$ = $1;}
+record_list: record_list STRING  {
+			char *result = malloc(strlen($1) + strlen($2) + 1);
+	    strcpy(result, $1);
+	    strcat(result, $2);
+			result[strlen(result)-1] = "\0";
+			$$ = result;
+		}
+	| record_list INTEGER  {
+			char *result = malloc(strlen($1) + strlen($2) + 1);
+	    strcpy(result, $1);
+	    strcat(result, $2);
+			result[strlen(result)-1] = "\0";
+			$$ = result;
+		}
+	|	record_list FLOAT  {
+			char *result = malloc(strlen($1) + strlen($2) + 1);
+	    strcpy(result, $1);
+	    strcat(result, $2);
+			result[strlen(result)-1] = "\0";
+			$$ = result;
+		}
+	| STRING { $$ = $1; }
+	| INTEGER { $$ = $1; }
+	| FLOAT { $$ = $1; }
+	;
 
 condition: FIELD OPERATOR VALUE {
 			int size;

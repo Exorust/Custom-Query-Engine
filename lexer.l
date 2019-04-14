@@ -18,7 +18,7 @@ OPENPARANTHESIS "("
 CLOSEPARANTHESIS ")"
 INTEGER {PDIGIT}{DIGIT}*
 FLOAT {INTEGER}"."{DIGIT}*
-STRING \".*\"b
+STRING \".*\"
 GET (?i:get)
 FROM (?i:from)
 AND (?i:and)
@@ -98,6 +98,7 @@ FIELDLIST {IDENTIFIER}(","{IDENTIFIER})*
 {WHERE} {return WHERE;}
 {IDENTIFIER} {return IDENTIFIER;}
 {FIELDLIST} {return FIELDLIST;}
+[ \t\n] ;
 
 .	return yytext[0];
 
