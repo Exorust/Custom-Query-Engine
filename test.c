@@ -10,6 +10,9 @@ int main()
 
     func_2();
     func_1();
+    int x,y=0,z=1;
+    x = y & z;
+    printf("%d\n", x );
 
     // signal to operating system program ran fine
     return 0;
