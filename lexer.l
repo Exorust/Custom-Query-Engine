@@ -18,7 +18,7 @@ OPENPARANTHESIS "("
 CLOSEPARANTHESIS ")"
 INTEGER {PDIGIT}{DIGIT}*
 FLOAT {INTEGER}"."{DIGIT}*
-STRING \".*\"
+STRING \"[^,]*\"
 GET (?i:get)
 FROM (?i:from)
 AND (?i:and)
@@ -44,7 +44,6 @@ dnum  (?i:dnum)
 dname (?i:dname)
 dlocation (?i:dlocation)
 IDENTIFIER ({LETTER}|{UNDERSCORE})({LETTER}|{DIGIT}|{UNDERSCORE}|{DOLLARSIGN})*
-FIELDLIST {IDENTIFIER}(","{IDENTIFIER})*
 %%
 (?i:quit) {yyterminate();
 }
@@ -69,7 +68,11 @@ FIELDLIST {IDENTIFIER}(","{IDENTIFIER})*
 	return FLOAT;}
 {STRING} {
 	char* pass = (char*)malloc(50*sizeof(char));
-	strcpy(pass,yytext);
+	int i;
+	for(i=1;i<strlen(yytext)-1;i++ ) {
+		pass[i-1] = yytext[i];
+	}
+	/* printf("\n\n%s\n\n",pass); */
 	yylval.str_ptr = pass;
 	return STRING;}
 {GET} {return GET;}
@@ -97,7 +100,6 @@ FIELDLIST {IDENTIFIER}(","{IDENTIFIER})*
 {dlocation} { return  dlocation;}
 {WHERE} {return WHERE;}
 {IDENTIFIER} {return IDENTIFIER;}
-{FIELDLIST} {return FIELDLIST;}
 [ \t\n] ;
 
 .	return yytext[0];

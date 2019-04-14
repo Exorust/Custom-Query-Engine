@@ -30,9 +30,9 @@ Grammar
    13      | INTEGER
    14      | FLOAT
 
-   15 record_list: record_list STRING
-   16            | record_list INTEGER
-   17            | record_list FLOAT
+   15 record_list: STRING COMMA record_list
+   16            | INTEGER COMMA record_list
+   17            | FLOAT COMMA record_list
    18            | STRING
    19            | INTEGER
    20            | FLOAT
@@ -67,7 +67,7 @@ Terminals, with rules where they appear
 $end (0) 0
 error (256)
 SEMICOLON (258)
-COMMA (259) 22
+COMMA (259) 15 16 17 22
 EQUAL (260) 33
 GREATER (261) 35
 GREATEREQ (262) 36
@@ -423,21 +423,30 @@ State 33
 
 State 34
 
-   18 record_list: STRING .
+   15 record_list: STRING . COMMA record_list
+   18            | STRING .
+
+    COMMA  shift, and go to state 41
 
     $default  reduce using rule 18 (record_list)
 
 
 State 35
 
-   19 record_list: INTEGER .
+   16 record_list: INTEGER . COMMA record_list
+   19            | INTEGER .
+
+    COMMA  shift, and go to state 42
 
     $default  reduce using rule 19 (record_list)
 
 
 State 36
 
-   20 record_list: FLOAT .
+   17 record_list: FLOAT . COMMA record_list
+   20            | FLOAT .
+
+    COMMA  shift, and go to state 43
 
     $default  reduce using rule 20 (record_list)
 
@@ -445,14 +454,8 @@ State 36
 State 37
 
     5 insert_type: INSERT RECORD OPENPARANTHESIS record_list . CLOSEPARANTHESIS INTO filetype
-   15 record_list: record_list . STRING
-   16            | record_list . INTEGER
-   17            | record_list . FLOAT
 
-    CLOSEPARANTHESIS  shift, and go to state 41
-    STRING            shift, and go to state 42
-    INTEGER           shift, and go to state 43
-    FLOAT             shift, and go to state 44
+    CLOSEPARANTHESIS  shift, and go to state 44
 
 
 State 38
@@ -490,30 +493,42 @@ State 40
 
 State 41
 
-    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS . INTO filetype
+   15 record_list: STRING COMMA . record_list
 
-    INTO  shift, and go to state 50
+    STRING   shift, and go to state 34
+    INTEGER  shift, and go to state 35
+    FLOAT    shift, and go to state 36
+
+    record_list  go to state 50
 
 
 State 42
 
-   15 record_list: record_list STRING .
+   16 record_list: INTEGER COMMA . record_list
 
-    $default  reduce using rule 15 (record_list)
+    STRING   shift, and go to state 34
+    INTEGER  shift, and go to state 35
+    FLOAT    shift, and go to state 36
+
+    record_list  go to state 51
 
 
 State 43
 
-   16 record_list: record_list INTEGER .
+   17 record_list: FLOAT COMMA . record_list
 
-    $default  reduce using rule 16 (record_list)
+    STRING   shift, and go to state 34
+    INTEGER  shift, and go to state 35
+    FLOAT    shift, and go to state 36
+
+    record_list  go to state 52
 
 
 State 44
 
-   17 record_list: record_list FLOAT .
+    5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS . INTO filetype
 
-    $default  reduce using rule 17 (record_list)
+    INTO  shift, and go to state 53
 
 
 State 45
@@ -530,7 +545,7 @@ State 45
     dname      shift, and go to state 17
     dlocation  shift, and go to state 18
 
-    FIELD  go to state 51
+    FIELD  go to state 54
 
 
 State 46
@@ -547,7 +562,7 @@ State 46
     dname      shift, and go to state 17
     dlocation  shift, and go to state 18
 
-    condition_list  go to state 52
+    condition_list  go to state 55
     condition       go to state 48
     FIELD           go to state 49
 
@@ -558,8 +573,8 @@ State 47
     9 condition_list: condition_list . AND condition
    10               | condition_list . OR condition
 
-    AND  shift, and go to state 53
-    OR   shift, and go to state 54
+    AND  shift, and go to state 56
+    OR   shift, and go to state 57
 
     $default  reduce using rule 8 (get_type)
 
@@ -575,45 +590,66 @@ State 49
 
    21 condition: FIELD . OPERATOR VALUE
 
-    EQUAL      shift, and go to state 55
-    GREATER    shift, and go to state 56
-    GREATEREQ  shift, and go to state 57
-    LESSER     shift, and go to state 58
-    LESSEREQ   shift, and go to state 59
+    EQUAL      shift, and go to state 58
+    GREATER    shift, and go to state 59
+    GREATEREQ  shift, and go to state 60
+    LESSER     shift, and go to state 61
+    LESSEREQ   shift, and go to state 62
 
-    OPERATOR  go to state 60
+    OPERATOR  go to state 63
 
 
 State 50
+
+   15 record_list: STRING COMMA record_list .
+
+    $default  reduce using rule 15 (record_list)
+
+
+State 51
+
+   16 record_list: INTEGER COMMA record_list .
+
+    $default  reduce using rule 16 (record_list)
+
+
+State 52
+
+   17 record_list: FLOAT COMMA record_list .
+
+    $default  reduce using rule 17 (record_list)
+
+
+State 53
 
     5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO . filetype
 
     EMP   shift, and go to state 31
     DEPT  shift, and go to state 32
 
-    filetype  go to state 61
+    filetype  go to state 64
 
 
-State 51
+State 54
 
     7 update_type: UPDATE RECORD IN filetype SET FIELD . TO VALUE WHERE condition_list
 
-    TO  shift, and go to state 62
+    TO  shift, and go to state 65
 
 
-State 52
+State 55
 
     6 delete_type: DELETE RECORD FROM filetype WHERE condition_list .
     9 condition_list: condition_list . AND condition
    10               | condition_list . OR condition
 
-    AND  shift, and go to state 53
-    OR   shift, and go to state 54
+    AND  shift, and go to state 56
+    OR   shift, and go to state 57
 
     $default  reduce using rule 6 (delete_type)
 
 
-State 53
+State 56
 
     9 condition_list: condition_list AND . condition
 
@@ -627,11 +663,11 @@ State 53
     dname      shift, and go to state 17
     dlocation  shift, and go to state 18
 
-    condition  go to state 63
+    condition  go to state 66
     FIELD      go to state 49
 
 
-State 54
+State 57
 
    10 condition_list: condition_list OR . condition
 
@@ -645,124 +681,124 @@ State 54
     dname      shift, and go to state 17
     dlocation  shift, and go to state 18
 
-    condition  go to state 64
+    condition  go to state 67
     FIELD      go to state 49
 
 
-State 55
+State 58
 
    33 OPERATOR: EQUAL .
 
     $default  reduce using rule 33 (OPERATOR)
 
 
-State 56
+State 59
 
    35 OPERATOR: GREATER .
 
     $default  reduce using rule 35 (OPERATOR)
 
 
-State 57
+State 60
 
    36 OPERATOR: GREATEREQ .
 
     $default  reduce using rule 36 (OPERATOR)
 
 
-State 58
+State 61
 
    34 OPERATOR: LESSER .
 
     $default  reduce using rule 34 (OPERATOR)
 
 
-State 59
+State 62
 
    37 OPERATOR: LESSEREQ .
 
     $default  reduce using rule 37 (OPERATOR)
 
 
-State 60
+State 63
 
    21 condition: FIELD OPERATOR . VALUE
 
-    STRING   shift, and go to state 65
-    INTEGER  shift, and go to state 66
-    FLOAT    shift, and go to state 67
+    STRING   shift, and go to state 68
+    INTEGER  shift, and go to state 69
+    FLOAT    shift, and go to state 70
 
-    VALUE  go to state 68
+    VALUE  go to state 71
 
 
-State 61
+State 64
 
     5 insert_type: INSERT RECORD OPENPARANTHESIS record_list CLOSEPARANTHESIS INTO filetype .
 
     $default  reduce using rule 5 (insert_type)
 
 
-State 62
+State 65
 
     7 update_type: UPDATE RECORD IN filetype SET FIELD TO . VALUE WHERE condition_list
 
-    STRING   shift, and go to state 65
-    INTEGER  shift, and go to state 66
-    FLOAT    shift, and go to state 67
+    STRING   shift, and go to state 68
+    INTEGER  shift, and go to state 69
+    FLOAT    shift, and go to state 70
 
-    VALUE  go to state 69
+    VALUE  go to state 72
 
 
-State 63
+State 66
 
     9 condition_list: condition_list AND condition .
 
     $default  reduce using rule 9 (condition_list)
 
 
-State 64
+State 67
 
    10 condition_list: condition_list OR condition .
 
     $default  reduce using rule 10 (condition_list)
 
 
-State 65
+State 68
 
    12 VALUE: STRING .
 
     $default  reduce using rule 12 (VALUE)
 
 
-State 66
+State 69
 
    13 VALUE: INTEGER .
 
     $default  reduce using rule 13 (VALUE)
 
 
-State 67
+State 70
 
    14 VALUE: FLOAT .
 
     $default  reduce using rule 14 (VALUE)
 
 
-State 68
+State 71
 
    21 condition: FIELD OPERATOR VALUE .
 
     $default  reduce using rule 21 (condition)
 
 
-State 69
+State 72
 
     7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE . WHERE condition_list
 
-    WHERE  shift, and go to state 70
+    WHERE  shift, and go to state 73
 
 
-State 70
+State 73
 
     7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE WHERE . condition_list
 
@@ -776,18 +812,18 @@ State 70
     dname      shift, and go to state 17
     dlocation  shift, and go to state 18
 
-    condition_list  go to state 71
+    condition_list  go to state 74
     condition       go to state 48
     FIELD           go to state 49
 
 
-State 71
+State 74
 
     7 update_type: UPDATE RECORD IN filetype SET FIELD TO VALUE WHERE condition_list .
     9 condition_list: condition_list . AND condition
    10               | condition_list . OR condition
 
-    AND  shift, and go to state 53
-    OR   shift, and go to state 54
+    AND  shift, and go to state 56
+    OR   shift, and go to state 57
 
     $default  reduce using rule 7 (update_type)

@@ -1,1 +1,1 @@
-insert record ( 1 "hi" "yo" )  into dept
+get dname,dnum from dept where dnum = 1

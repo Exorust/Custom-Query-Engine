@@ -13,6 +13,8 @@ int main()
     int x,y=0,z=1;
     x = y & z;
     printf("%d\n", x );
+    FILE* fp_old = fopen("DEPT.txt",'r');
+    FILE* fp_new = fopen("temp",'w');
 
     // signal to operating system program ran fine
     return 0;

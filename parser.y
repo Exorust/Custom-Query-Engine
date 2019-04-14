@@ -8,6 +8,13 @@
 	#define YYDEBUG 1
 	int f;
 	extern FILE *yyin;
+	int yylex();
+	void yyerror(const char *s);
+
+	int get_function(int*,int, int*);
+	int update_function(int, char*,int, int*);
+	int delete_function(int, int* );
+	int insert_function(int, char*);
 %}
 
 %union {
@@ -25,8 +32,8 @@
 %token dlocation WHERE IDENTIFIER FIELDLIST
 %token <str_ptr> STRING INTEGER FLOAT
 
-%type <num_value> query get_type insert_type update_type delete_type filetype OPERATOR
-%type <num_array> condition_list condition fields FIELD
+%type <num_value> query get_type insert_type update_type delete_type filetype OPERATOR FIELD
+%type <num_array> condition_list condition fields
 %type <str_ptr> VALUE record_list
 
 %%
@@ -92,25 +99,31 @@ VALUE: STRING {$$ = $1;}
 	| INTEGER {$$ = $1;}
 	| FLOAT {$$ = $1;}
 
-record_list: record_list STRING  {
-			char *result = malloc(strlen($1) + strlen($2) + 1);
+record_list: STRING COMMA record_list   {
+			char *result = malloc(strlen($1) + strlen($3) + 2);
 	    strcpy(result, $1);
-	    strcat(result, $2);
-			result[strlen(result)-1] = "\0";
+			strcat(result, " ");
+			printf("%s",$3);
+	    strcat(result, $3);
+			result[strlen(result)-1] = '\0';
 			$$ = result;
 		}
-	| record_list INTEGER  {
-			char *result = malloc(strlen($1) + strlen($2) + 1);
+	| INTEGER COMMA record_list{
+			char *result = malloc(strlen($1) + strlen($3) + 2);
 	    strcpy(result, $1);
-	    strcat(result, $2);
-			result[strlen(result)-1] = "\0";
+			strcat(result, " ");
+	    strcat(result, $3);
+			printf("%s",$3);
+			result[strlen(result)-1] = '\0';
 			$$ = result;
 		}
-	|	record_list FLOAT  {
-			char *result = malloc(strlen($1) + strlen($2) + 1);
+	|	FLOAT COMMA record_list  {
+			char *result = malloc(strlen($1) + strlen($3) + 2);
 	    strcpy(result, $1);
-	    strcat(result, $2);
-			result[strlen(result)-1] = "\0";
+			strcat(result, " ");
+	    strcat(result, $3);
+			printf("%s",$3);
+			result[strlen(result)-1] = '\0';
 			$$ = result;
 		}
 	| STRING { $$ = $1; }
@@ -130,7 +143,7 @@ condition: FIELD OPERATOR VALUE {
 			else {
 				abort();
 			}
-			FILE* fp_used = fopen(file_name,'r');
+			FILE* fp_used = fopen(file_name,"r");
 
 			fscanf(fp_used,"%d\n", &size);
 			int* arr = (int*)malloc(sizeof(int)*(size+1));
@@ -142,7 +155,7 @@ condition: FIELD OPERATOR VALUE {
 
 				if($1 == 1 ) {
 					int eid_var;
-					fscanf(fp_used, "%d %*s %*d %*s %*d %*d",&eid_var);
+					fscanf(fp_used, "%d %*s %*d %*s %*d %*d\n",&eid_var);
 					if( $2 == 1 ) {
 						if(eid_var == atoi($3)) {
 							flag = 1;
@@ -163,7 +176,7 @@ condition: FIELD OPERATOR VALUE {
 				else if($1 == 2 ) {
 					char ename_var[50];
 					memset(&ename_var[0], 0, sizeof(ename_var));
-					fscanf(fp_used, "%*d %s %*d %*s %*d %*d",&ename_var);
+					fscanf(fp_used, "%*d %s %*d %*s %*d %*d\n",ename_var);
 					if( $2 == 1 ) {
 						if(strcmp(ename_var,$3) ==0 ) {
 							flag = 1;
@@ -173,7 +186,7 @@ condition: FIELD OPERATOR VALUE {
 
 				else if($1 == 3 ) {
 					int eage_var;
-					fscanf(fp_used, "%*d %*s %d %*s %*d %*d",&eage_var);
+					fscanf(fp_used, "%*d %*s %d %*s %*d %*d\n",&eage_var);
 					if( $2 == 1 ) {
 						if(eage_var == atoi($3)) {
 							flag = 1;
@@ -194,7 +207,7 @@ condition: FIELD OPERATOR VALUE {
 				else if($1 == 4 ) {
 					char eaddress_var[50];
 					memset(&eaddress_var[0], 0, sizeof(eaddress_var));
-					fscanf(fp_used, "%*d %*s %*d %s %*d %*d",&eaddress_var);
+					fscanf(fp_used, "%*d %*s %*d %s %*d %*d\n",eaddress_var);
 					if( $2 == 1 ) {
 						if(strcmp(eaddress_var,$3) ==0 ) {
 							flag = 1;
@@ -204,7 +217,7 @@ condition: FIELD OPERATOR VALUE {
 
 				else if($1 == 5 ) {
 					int salary_var;
-					fscanf(fp_used, "%*d %*s %*d %*s %d %*d",&salary_var);
+					fscanf(fp_used, "%*d %*s %*d %*s %d %*d\n",&salary_var);
 					if( $2 == 1 ) {
 						if(salary_var == atoi($3)) {
 							flag = 1;
@@ -224,7 +237,7 @@ condition: FIELD OPERATOR VALUE {
 
 				else if($1 == 6 ) {
 					int deptno_var;
-					fscanf(fp_used, "%*d %*s %*d %*s %*d %d",&deptno_var	);
+					fscanf(fp_used, "%*d %*s %*d %*s %*d %d\n",&deptno_var	);
 					if( $2 == 1 ) {
 						if(deptno_var == atoi($3)) {
 							flag = 1;
@@ -244,7 +257,7 @@ condition: FIELD OPERATOR VALUE {
 
 				else if($1 == 7 ) {
 					int dnum_var;
-					fscanf(fp_used, "%d %*s %*s",&dnum_var);
+					fscanf(fp_used, "%d %*s %*s\n",&dnum_var);
 					if( $2 == 1 ) {
 						if(dnum_var == atoi($3)) {
 							flag = 1;
@@ -265,7 +278,7 @@ condition: FIELD OPERATOR VALUE {
 				else if($1 == 8 ) {
 					char dname_var[50];
 					memset(&dname_var[0], 0, sizeof(dname_var));
-					fscanf(fp_used, "%*d %s %*s",&dname_var);
+					fscanf(fp_used, "%*d %s %*s\n",dname_var);
 					if( $2 == 1 ) {
 						if(strcmp(dname_var,$3) ==0 ) {
 							flag = 1;
@@ -276,7 +289,7 @@ condition: FIELD OPERATOR VALUE {
 				else if($1 == 9 ) {
 					char dlocation_var[50];
 					memset(&dlocation_var[0], 0, sizeof(dlocation_var));
-					fscanf(fp_used, "%*d %*s %s",&dlocation_var);
+					fscanf(fp_used, "%*d %*s %s\n",dlocation_var);
 					if( $2 == 1 ) {
 						if(strcmp(dlocation_var,$3) ==0 ) {
 							flag = 1;
@@ -362,7 +375,7 @@ int get_function(int* field_arr,int fx, int* farray) {
 	}
 
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
-		FILE* fp_old = fopen(file_name,'r');
+		FILE* fp_old = fopen(file_name,"r");
 		/* FILE* fp_new = fopen("temp",'r'); */
 		fscanf(fp_old,"%d\n",&file_size);
 		/* fprintf(fp_new,"%d\n",farray[0]); */
@@ -372,9 +385,9 @@ int get_function(int* field_arr,int fx, int* farray) {
 		for(i=0;i<file_size;i++) {
 			/* Cases that satisfy get */
 			if(farray[i+1] == 1) {
-				fscanf(fp_old,"%s",&buffer);
+				fscanf(fp_old,"%[^\n]\n",buffer);
 				/* Print the get vals */
-				printf("%s",buffer);
+				printf("%s\n",buffer);
 				memset(&buffer[0], 0, strlen(buffer));
 				counter++;
 			}
@@ -397,7 +410,7 @@ int get_function(int* field_arr,int fx, int* farray) {
 	}
 }
 
-int update_function(int* field_arr, char* new_val,int fx, int* farray) {
+int update_function(int field_var, char* new_val,int fx, int* farray) {
 	FILE* fp_old,fp_new;
 	int file_size;
 	int counter = 0;
@@ -414,12 +427,12 @@ int update_function(int* field_arr, char* new_val,int fx, int* farray) {
 	}
 
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
-		FILE* fp_old = fopen(file_name,'r');
-		FILE* fp_new = fopen("temp",'w');
+		FILE* fp_old = fopen(file_name,"r");
+		FILE* fp_new = fopen("temp","w");
 		fscanf(fp_old,"%d\n",&file_size);
 		fprintf(fp_new,"%d\n",farray[0]);
 		int i;
-		char buffer[500];
+		char buffer[100];
 		memset(&buffer[0], 0, sizeof(buffer));
 		/* memset(&nbuffer[0], 0, sizeof(nbuffer)); */
 
@@ -433,9 +446,9 @@ int update_function(int* field_arr, char* new_val,int fx, int* farray) {
 					char eaddress_var[50];
 					int salary_var;
 					int deptno_var;
-					fscanf(fp_old,"%d %s %d %s %d %d",&eid_var,ename_var,eage_var,eaddress_var,salary_var,deptno_var);
+					fscanf(fp_old,"%d %s %d %s %d %d\n",&eid_var,ename_var,&eage_var,eaddress_var,&salary_var,&deptno_var);
 					/* Print the get vals */
-					switch (field_arr[0]) {
+					switch (field_var) {
 						case 1:
 							eid_var = atoi(new_val);
 							break;
@@ -457,7 +470,7 @@ int update_function(int* field_arr, char* new_val,int fx, int* farray) {
 							deptno_var = atoi(new_val);
 							break;
 						}
-					fprintf(fp_new,"%d %s %d %s %d %d",&eid_var,ename_var,eage_var,eaddress_var,salary_var,deptno_var);
+					fprintf(fp_new,"%d %s %d %s %d %d\n",eid_var,ename_var,eage_var,eaddress_var,salary_var,deptno_var);
 					/* memset(&buffer[0], 0, strlen(buffer)); */
 					counter++;
 				}
@@ -465,8 +478,8 @@ int update_function(int* field_arr, char* new_val,int fx, int* farray) {
 					int dnum_var;
 					char dname_var[50];
 					char dlocation_var[50];
-					fscanf(fp_old,"%d %s %s",&dnum_var,&dname_var,&dlocation_var);
-					switch (field_arr[0]) {
+					fscanf(fp_old,"%d %s %s\n",&dnum_var,dname_var,dlocation_var);
+					switch (field_var) {
 						case 7:
 							dnum_var = atoi(new_val);
 							break;
@@ -479,15 +492,15 @@ int update_function(int* field_arr, char* new_val,int fx, int* farray) {
 							strcpy(dlocation_var,new_val);
 							break;
 						}
-					fprintf(fp_new,"%d %s %s",&dnum_var,&dname_var,&dlocation_var);
+					fprintf(fp_new,"%d %s %s\n",dnum_var,dname_var,dlocation_var);
 					memset(&buffer[0], 0, strlen(buffer));
 					counter++;
 				}
 			}
 			else {
-				fscanf(fp_old,"%s",&buffer);
+				fscanf(fp_old,"%[^\n]\n",buffer);
 				/* Print the get vals */
-				fprintf(fp_new,"%s",buffer);
+				fprintf(fp_new,"%s\n",buffer);
 				memset(&buffer[0], 0, strlen(buffer));
 				counter++;
 				continue;
@@ -525,8 +538,8 @@ int delete_function(int fx, int* farray) {
 	}
 
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
-		FILE* fp_old = fopen(file_name,'r');
-		FILE* fp_new = fopen("temp",'w');
+		FILE* fp_old = fopen(file_name,"r");
+		FILE* fp_new = fopen("temp","w");
 		fscanf(fp_old,"%d\n",&file_size);
 		fprintf(fp_new,"%d\n",(file_size - farray[0]));
 		int i;
@@ -534,12 +547,15 @@ int delete_function(int fx, int* farray) {
 		memset(&buffer[0], 0, sizeof(buffer));
 		for(i=0;i<file_size;i++) {
 			if(farray[i+1] == 0) {
-				fscanf(fp_old,"%s",&buffer);
-				fprintf(fp_new,"%s",buffer);
+				fscanf(fp_old,"%[^\n]\n",buffer);
+				fprintf(fp_new,"%s\n",buffer);
+				/* printf("%s\n",buffer); */
 				memset(&buffer[0], 0, strlen(buffer));
 				counter++;
 			}
 			else {
+				fscanf(fp_old,"%[^\n]\n",buffer);
+				memset(&buffer[0], 0, strlen(buffer));
 				/* Delete the cases that satisfy the criteria */
 				continue;
 			}
@@ -575,16 +591,16 @@ int insert_function(int fx, char* record_list) {
 	}
 
 	if(strcmp(file_name,"EMP.txt") == 0 || strcmp(file_name,"DEPT.txt") == 0 ) {
-		FILE* fp_old = fopen(file_name,'r');
-		FILE* fp_new = fopen("temp",'w');
+		FILE* fp_old = fopen(file_name,"r");
+		FILE* fp_new = fopen("temp","w");
 		fscanf(fp_old,"%d\n",&file_size);
 		fprintf(fp_new,"%d\n",(file_size+1));
 		int i;
 		char buffer[500];
 		memset(&buffer[0], 0, sizeof(buffer));
 		for(i=0;i<file_size;i++) {
-			fscanf(fp_old,"%s",&buffer);
-			fprintf(fp_new,"%s",buffer);
+			fscanf(fp_old,"%[^\n]\n",buffer);
+			fprintf(fp_new,"%s\n",buffer);
 			memset(&buffer[0], 0, strlen(buffer));
 		}
 		fprintf(fp_new,"%s\n",record_list);
