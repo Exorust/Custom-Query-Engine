@@ -5,7 +5,7 @@
 	#include <assert.h>
 	#define SUCCESS 1
 	#define FAILURE 0
-	#define YYDEBUG 1
+	#define YYDEBUG 0
 	int f;
 	extern FILE *yyin;
 	int yylex();
@@ -100,30 +100,30 @@ VALUE: STRING {$$ = $1;}
 	| FLOAT {$$ = $1;}
 
 record_list: STRING COMMA record_list   {
-			char *result = malloc(strlen($1) + strlen($3) + 2);
+			char *result = malloc(strlen($1) + strlen($3) + 4);
 	    strcpy(result, $1);
 			strcat(result, " ");
-			printf("%s",$3);
 	    strcat(result, $3);
-			result[strlen(result)-1] = '\0';
+			/* printf("%s",$3); */
+			/* result[strlen(result)-1] = '\0'; */
 			$$ = result;
 		}
 	| INTEGER COMMA record_list{
-			char *result = malloc(strlen($1) + strlen($3) + 2);
+			char *result = malloc(strlen($1) + strlen($3) + 4);
 	    strcpy(result, $1);
 			strcat(result, " ");
 	    strcat(result, $3);
-			printf("%s",$3);
-			result[strlen(result)-1] = '\0';
+			/* printf("%s",$3); */
+			/* result[strlen(result)-1] = '\0'; */
 			$$ = result;
 		}
 	|	FLOAT COMMA record_list  {
-			char *result = malloc(strlen($1) + strlen($3) + 2);
+			char *result = malloc(strlen($1) + strlen($3) + 4);
 	    strcpy(result, $1);
 			strcat(result, " ");
 	    strcat(result, $3);
-			printf("%s",$3);
-			result[strlen(result)-1] = '\0';
+			/* printf("%s",$3); */
+			/* result[strlen(result)-1] = '\0'; */
 			$$ = result;
 		}
 	| STRING { $$ = $1; }

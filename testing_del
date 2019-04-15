@@ -1,1 +1,1 @@
-delete record from dept where dnum = 1
+delete record from dept where dnum = 2

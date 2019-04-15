@@ -1,10 +1,22 @@
 # Prerequisites
 *.d
+DEPT.txt
+EMP.txt
+inputs
+testing*
+y.tab.h
+y.tab.c
+y.output
+y.dot
+test.c
+core
+
 
 # Object files
 *.o
 *.ko
 *.obj
+*.out
 *.elf
 
 # Linker output
